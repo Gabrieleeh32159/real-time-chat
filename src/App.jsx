@@ -10,9 +10,10 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault()
     document.getElementById("input-message").value = ""
-    setMessages(prevMessages => [...prevMessages, {content: message, mine: true}])
+    setMessages(prevMessages => [...prevMessages, { content: message, mine: true }])
     socket.emit("new message", message)
     setMessage("")
+    document.getElementById("input-message").scrollIntoView()
   }
 
   useEffect(() => {
@@ -21,24 +22,25 @@ function App() {
     })
 
     socket.on('new message', (new_message) => {
-      setMessages(prevMessages => [...prevMessages, {content: new_message, mine: false}])
+      setMessages(prevMessages => [...prevMessages, { content: new_message, mine: false }])
     })
 
   }, [])
-
   return (
     <div className="min-h-screen flex flex-col items-center py-5 px-3 w-full md:max-w-[500px] lg:max-w-[500px]">
       <h1 className="text-4xl text-center">My real time chat!</h1>
-      <div className="h-[750px] w-full mt-6 rounded-3xl flex flex-col justify-end gap-6 p-3">
-        {
-          messages.map((message, index) => (
-            <Message content={message.content} mine={message.mine} key={index}/>
-          ))
-        }
+      <div className="flex flex-col h-[750px] justify-end w-full">
+        <div id="main-content" className="overflow-y-auto w-full mt-6 rounded-3xl flex flex-col gap-6 p-3">
+          {
+            messages.map((message, index) => (
+              <Message content={message.content} mine={message.mine} id={index} key={index} />
+            ))
+          }
+        </div>
       </div>
       <div className="w-full">
         <form action="" className="w-full flex" onSubmit={handleSubmit}>
-          <input id="input-message" placeholder="Write your message here..." onChange={e => {setMessage(e.target.value)}} type="text" name="message" className="w-full rounded-full px-2 shadow-sm placeholder-slate-400
+          <input id="input-message" placeholder="Write your message here..." onChange={e => { setMessage(e.target.value) }} type="text" name="message" className="w-full rounded-full px-2 shadow-sm placeholder-slate-400
               focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-800
               disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
               invalid:border-pink-500 invalid:text-pink-600
